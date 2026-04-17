@@ -2,6 +2,7 @@ FROM nousresearch/hermes-agent:v2026.4.16
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
+    gh \
     jq \
     vim \
     curl \
