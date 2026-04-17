@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-RUN uv pip install --system "hindsight-client>=0.4.22"
+RUN cd /opt/hermes && uv pip install "hindsight-client>=0.4.22"
 
 RUN npm install -g @anthropic-ai/claude-code
 
