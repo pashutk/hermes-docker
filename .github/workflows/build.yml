@@ -31,14 +31,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Extract Hermes version
+        id: hermes
+        run: echo "version=$(grep -m1 'FROM nousresearch/hermes-agent:' Dockerfile | cut -d: -f2)" >> $GITHUB_OUTPUT
+
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=sha
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=${{ steps.hermes.outputs.version }},enable={{is_default_branch}}
+            type=raw,value=${{ steps.hermes.outputs.version }}-sha-{{sha}},enable={{is_default_branch}}
 
       - name: Build and push
         uses: docker/build-push-action@v6
