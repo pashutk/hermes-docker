@@ -31,24 +31,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract Hermes version
-        run: echo "HERMES_VERSION=$(grep -m1 'FROM nousresearch/hermes-agent:' Dockerfile | cut -d: -f2)" >> $GITHUB_ENV
-
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=raw,value=${{ env.HERMES_VERSION }},enable={{is_default_branch}}
-            type=raw,value=${{ env.HERMES_VERSION }}-sha-{{sha}},enable={{is_default_branch}}
+      - name: Generate tags
+        id: tags
+        run: |
+          HERMES=$(grep -m1 'FROM nousresearch/hermes-agent:' Dockerfile | cut -d: -f2)
+          SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          REPO="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+          echo "tags=${REPO}:${HERMES},${REPO}:${HERMES}-sha-${SHA}" >> $GITHUB_OUTPUT
 
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.tags.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
