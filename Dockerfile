@@ -19,3 +19,7 @@ RUN cd /opt/hermes && uv pip install "hindsight-client>=0.4.22"
 RUN npm install -g @anthropic-ai/claude-code
 
 RUN npm install -g opencode-ai@latest
+
+RUN mkdir -p /home/hermes \
+ && usermod -d /home/hermes hermes \
+ && chown -R hermes:hermes /home/hermes
