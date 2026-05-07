@@ -1,4 +1,4 @@
-FROM nousresearch/hermes-agent:v2026.4.30
+FROM nousresearch/hermes-agent:v2026.5.7
 
 USER root
 
