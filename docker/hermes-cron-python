@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script="$1"
+shift
+
+home="${HERMES_HOME:-/opt/data}"
+venv="${HERMES_CRON_VENV:-$home/cron/venv}"
+python="$venv/bin/python"
+export UV_CACHE_DIR="${UV_CACHE_DIR:-$venv/.uv-cache}"
+
+if [ ! -x "$python" ]; then
+    uv venv --clear --python /usr/bin/python3 "$venv"
+fi
+
+install_requirements() {
+    local file="$1"
+    [ -f "$file" ] || return 0
+
+    local stamp_dir="$venv/.requirements"
+    local stamp="$stamp_dir/$(printf '%s' "$file" | sha256sum | cut -d' ' -f1)"
+    local hash
+
+    mkdir -p "$stamp_dir"
+    hash="$(sha256sum "$file" | cut -d' ' -f1)"
+
+    if [ ! -f "$stamp" ] || [ "$(cat "$stamp")" != "$hash" ]; then
+        uv pip install --python "$python" -r "$file"
+        printf '%s' "$hash" > "$stamp"
+    fi
+}
+
+install_requirements "$home/cron/requirements.txt"
+install_requirements "$home/scripts/requirements.txt"
+install_requirements "$(dirname "$script")/requirements.txt"
+
+exec "$python" "$script" "$@"
