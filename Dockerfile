@@ -28,9 +28,13 @@ RUN npm install -g @anthropic-ai/claude-code
 
 RUN npm install -g opencode-ai@latest
 
+RUN cd /opt/hermes/ui-tui \
+ && npm run build \
+ && ln -sf entry-exports.js packages/hermes-ink/dist/ink-bundle.js
+
 RUN mkdir -p /home/hermes \
  && usermod -d /home/hermes hermes \
- && chown -R hermes:hermes /home/hermes
+ && chown -R hermes:hermes /home/hermes /opt/hermes/ui-tui
 
 ENV HOME=/home/hermes \
     HERMES_HOME=/home/hermes/.hermes \
