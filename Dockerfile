@@ -30,7 +30,6 @@ RUN npm install -g opencode-ai@latest
 
 RUN cd /opt/hermes/ui-tui \
  && npm run build \
- && ln -sf entry-exports.js packages/hermes-ink/dist/ink-bundle.js \
  && chown -R hermes:hermes /opt/hermes/ui-tui
 
 RUN mkdir -p /home/hermes \
