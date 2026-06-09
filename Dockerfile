@@ -33,7 +33,12 @@ RUN cd /opt/hermes/ui-tui \
 
 RUN mkdir -p /home/hermes \
  && usermod -d /home/hermes hermes \
- && chown -R 1000:1000 /home/hermes /opt/hermes/ui-tui
+ && chown -R 1000:1000 \
+    /home/hermes \
+    /opt/hermes/.venv \
+    /opt/hermes/ui-tui \
+    /opt/hermes/gateway \
+    /opt/hermes/node_modules
 
 ENV HOME=/home/hermes \
     HERMES_HOME=/home/hermes/.hermes \
