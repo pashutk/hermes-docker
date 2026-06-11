@@ -31,10 +31,4 @@ RUN npm install -g opencode-ai@latest
 RUN cd /opt/hermes/ui-tui \
  && npm run build
 
-RUN chown -R 1000:1000 \
-    /opt/hermes/.venv \
-    /opt/hermes/ui-tui \
-    /opt/hermes/gateway \
-    /opt/hermes/node_modules
-
 ENV HERMES_TUI_DIR=/opt/hermes/ui-tui
