@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+"""Patch the cron scheduler to use hermes-cron-python wrapper."""
+from pathlib import Path
+
+for path in [
+    Path("/opt/hermes/cron/scheduler_script.py"),
+    Path("/opt/hermes/cron/scheduler.py"),
+]:
+    if not path.exists():
+        continue
+    text = path.read_text()
+    old = '[sys.executable, str(path)]'
+    new = '["/usr/local/bin/hermes-cron-python", str(path)]'
+    if old in text:
+        path.write_text(text.replace(old, new, 1))
+        print("Patched " + str(path))
+        break
+    elif new in text:
+        print("Already patched: " + str(path))
+        break
+else:
+    print("WARNING: no scheduler file found to patch")
